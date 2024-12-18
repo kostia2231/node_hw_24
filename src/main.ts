@@ -1,4 +1,5 @@
 import express, { Response, Request } from "express";
+import { RequestBody } from "../src/types/reqBody";
 import "dotenv/config";
 const port = process.env.PORT;
 
@@ -9,7 +10,7 @@ app.get("/", (_req: Request, res: Response) => {
   res.send("hello from a server");
 });
 
-app.post("/", (req: Request, res: Response) => {
+app.post("/", (req: Request<{}, {}, RequestBody>, res: Response) => {
   const { data } = req.body;
 
   if (!data) {
