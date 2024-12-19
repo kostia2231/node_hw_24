@@ -1,7 +1,8 @@
 import express, { Response, Request } from "express";
 import { RequestBody } from "../src/types/reqBody";
+import { APIerror } from "./errors/APIerror";
 import "dotenv/config";
-const port = process.env.PORT;
+const port = process.env.PORT || 8080;
 
 const app = express();
 app.use(express.json());
@@ -11,13 +12,21 @@ app.get("/", (_req: Request, res: Response) => {
 });
 
 app.post("/", (req: Request<{}, {}, RequestBody>, res: Response) => {
-  const { data } = req.body;
+  try {
+    const { data } = req.body;
 
-  if (!data) {
-    res.status(404).json({ message: "data not found" });
-    return;
+    if (!data) {
+      res.status(404).json({ message: "data not found" });
+      return;
+    }
+
+    res.send(data);
+  } catch (err) {
+    console.error("error", (err as APIerror).stack);
+    res
+      .status(500)
+      .json({ message: "server error", error: (err as APIerror).message });
   }
-  res.send(data);
 });
 
 app.listen(port, () => {
